@@ -13,11 +13,16 @@ import java.util.List;
 public class Servicios {
 
 	private HashMap<String,Tarea> MapaTareas;
+	private List<Tarea> ListaCritica ;
+	private List<Tarea> ListaNoCritica ;
+
 	public Servicios(String pathProcesadores, String pathTareas){
 		CSVReader reader = new CSVReader();
 		reader.readProcessors(pathProcesadores);
 		reader.readTasks(pathTareas);
 		this.MapaTareas=new HashMap();
+		this.ListaCritica = new ArrayList<>();
+		this.ListaNoCritica = new ArrayList<>();
 	}
 	
 	/*
@@ -29,6 +34,7 @@ public class Servicios {
 			MapaTareas.put(ID,new Tarea(ID,nombre, tiempo, critica, prioridad));
 		}
 	}
+
 	public boolean contieneTarea(String id) {
 		return this.MapaTareas.containsKey(id);
 		}
@@ -46,38 +52,23 @@ public class Servicios {
      */
 	
 	public List<Tarea> servicio2(boolean esCritica) {
-		List<Tarea> ListaResultado = new ArrayList<>();
-		for(Tarea t : MapaTareas.values()) {
-			if(esCritica && t.isCritica()) {
-			 ListaResultado.add(t);
-			}
-			else if(!esCritica && !t.isCritica()){
-				ListaResultado.add(t);
-			}
-				
+		if(esCritica){
+			return ListaCritica;
 		}
-		return ListaResultado;
-		
+		return ListaNoCritica;
 	}
-	/* Preguntar cual es mas eficiente!
-	 * 
-	 */
-	/*public List<Tarea> servicio2(boolean esCritica) {
-		List<Tarea> list = new ...;
-		Iterator<Tarea> it = obtenerTareas();
-		if(it.hasNext()){
-			Tarea tarea = it.next();
-			if(tarea.isCritica && esCritica){
-				list.add(Tarea);
-	}	else if(!tarea.isCritica && !esCritica){
-		list.add(Tarea);
-	} else {
-		return new List<>();
-	}
-	}*/
 
+	public void addTareaCritica(Tarea t) {
+		if(t.isCritica()) {
+			ListaCritica.add(t); // pregungtar por collections sort, para q qeuden ordenadas para la 2da entrega
+		   }
+		   else{
+			   ListaNoCritica.add(t);
+		   }
+	}	
+	
     /*
-     * Expresar la complejidad temporal del servicio 3.
+     *El siguiente metodo es O(n), aunque entendemos que lo podriamos realizar con arbol binario de busqueda y en el peor de los casos su complejidad seria O(n).
      */
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
 		List<Tarea> Resultado= new ArrayList<>();
