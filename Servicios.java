@@ -3,8 +3,8 @@ package TPEProg3;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * NO modificar la interfaz de esta clase ni sus métodos públicos.
@@ -14,20 +14,22 @@ import java.util.Map;
 public class Servicios {
 
 	private int tiempoTotal;
-	private HashMap<String,Tarea> mapaTareas;
+	private HashMap<String, Tarea> mapaTareas;
+	private HashMap<String, Procesador> mapProcesadores;
 	private List<Tarea> ListaCritica ;
 	private List<Tarea> ListaNoCritica;
-	private HashMap<Procesador, List<Tarea>> mapProcesadores;
+	private List<Tarea> listTareas;
 	//private List<Tarea> visitados;
 
 	public Servicios(String pathProcesadores, String pathTareas){
 		CSVReader reader = new CSVReader();
 		reader.readProcessors(pathProcesadores);
 		reader.readTasks(pathTareas);
-		this.mapaTareas = new HashMap();
+		this.mapaTareas = new HashMap<>();
 		this.mapProcesadores = new HashMap<>();
 		this.ListaCritica = new ArrayList<>();
 		this.ListaNoCritica = new ArrayList<>();
+		this.listTareas = new ArrayList<>();
 		this.tiempoTotal = 0;
 	}
 	
@@ -39,6 +41,7 @@ public class Servicios {
 		if(!contieneTarea(ID)) {
 			Tarea t = new Tarea(ID,nombre, tiempo, critica, prioridad);
 			mapaTareas.put(ID, t);
+			listTareas.add(t);
 			addTareaCritica(t);
 		}
 	}
@@ -85,6 +88,15 @@ public class Servicios {
 		return Resultado;
 	}
 
+
+	private int calcularTiempoTotal(HashMap<String, Procesador> asignacion) {
+		int tiempoTotal = 0;
+		for (Procesador procesador : asignacion.values()) {
+			tiempoTotal += procesador.getTiempoTotal();
+		}
+		return tiempoTotal;
+	}
+
 	public int getTiempoTotal() {
 		return tiempoTotal;
 	}
@@ -93,54 +105,44 @@ public class Servicios {
 		this.tiempoTotal = tiempoTotal;
 	}
 
-	//preguntar que devuelve
+	
 	public void asignacionTareas(int tiempo){
-		//crear ListActual<Tarea> add, remove, probando todas las posibilidades posibles
-		//si el tiempoTotal < tiempo;
-		//llamar al privado backtracking();
-		//return hashMap?
-			
-		List<Tarea> listActual = new ArrayList<>();
-		backAsignacionTareas(tiempo, listActual);
-		
+		Estado estado = new Estado();			
+		backAsignacionTareas(tiempo, estado, listTareas);
+		System.out.println(estado.toString());
 	}
-									//10, [];
-	private void backAsignacionTareas(int tiempo, List<Tarea> listActual){
+									
+	private void backAsignacionTareas(int tiempo, Estado estado, List<Tarea> listTareas){
 		//condicion de corte, quedarnos sin tareas de nuestro hashMap
-		
-		if(tiempo == 0 && !hayMasTareas(listActual)){ 
-			System.out.println(listActual);
-		} else{
-
-			for (Map.Entry<String, Tarea> entry : mapaTareas.entrySet()) {
-				String id = entry.getKey(); //devuelve Procesador1
-				Tarea t = entry.getValue();
-				
-				listActual.add(t);
-				backAsignacionTareas((tiempo-t.getTiempo()), listActual);
-				listActual.remove(listActual.size()-1);
-				
+		if(listTareas.isEmpty()){ //primer condicion, que no haya mas tareas
+			estado.incrementarEstado();
+			if(estado.esLaMejorSolucion()){ //segunda condicion que el estado tenga mejor solucion que la guardada como mejor
+				estado.actualizarSolucion();
 			}
-			//tomo una tarea de mi mapTareas y al mismo la agrego a mi lista visitados.
+		}
+		else{
+			Tarea tarea = listTareas.remove(0); //obtiene el primer elemento de listTareas y lo elimina
+			Iterator<Procesador> itProcesador = obtProcesadores();
+			while(itProcesador.hasNext()){
+				Procesador proc = itProcesador.next();
+				if(proc.cumpleCondicion(tarea, tiempo)){
+					//proc.addTarea(tarea); //preguntar
+					estado.addTarea(tarea, proc);
+					backAsignacionTareas(tiempo, estado, listTareas);
+					estado.removeTarea(tarea, proc);
+					//proc.removeTarea(tarea);
+				}
+			}
+			listTareas.add(0, tarea);
 		}
 	}
 
-	private boolean hayMasTareas(List<Tarea>listActual){
-		return this.mapaTareas.keySet().size() >= listActual.size();
-	}
-
-	//tomo una tarea de mi mapTareas y al mismo la agrego a mi lista visitados. lista no crece mas cuando listVisitados.size == List(hashmap.values)
-
-	public void addProcesador(int id_procesador, String codigo_procesador, boolean esta_refrigerado, int anio_procesamiento){
+	public void addProcesador(String id_procesador, String codigo_procesador, boolean esta_refrigerado, int anio_procesamiento){
 		Procesador procesador = new Procesador(id_procesador, codigo_procesador, esta_refrigerado, anio_procesamiento);
-		this.mapProcesadores.put(procesador, new ArrayList<>());
+		this.mapProcesadores.put(id_procesador, procesador);
 	}
 
-	private int calcularTiempoTotal() {
-        tiempoTotal = 0;
-        for (Tarea tarea : mapaTareas.values()) {
-            tiempoTotal += tarea.getTiempo(); // Suponiendo que Tarea tiene un método getTiempo() que devuelve el tiempo de la tarea
-        }
-        return tiempoTotal;
-    }
+	public Iterator<Procesador> obtProcesadores(){
+		return this.mapProcesadores.values().iterator();
+	}
 }
