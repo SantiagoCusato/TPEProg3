@@ -36,7 +36,7 @@ public class Procesador {
         return codigo_procesador;
     }
 
-    public void addTarea(Tarea t){
+    public void addTarea(Tarea t){  //chequear la cantidad de criticas
         this.listTareas.add(t);
         if(t.isCritica()){ 
             this.tareasCriticas++; //incremento tareasCriticas si es critica la tarea
@@ -44,7 +44,10 @@ public class Procesador {
     }
 
     public void removeTarea(Tarea t){
-        this.listTareas.remove(t);
+        if(t.isCritica()){
+            this.tareasCriticas--;
+        }
+        this.listTareas.remove(t);//chequear si la tarea es critica
     }
 
     public boolean cumpleCondicion(Tarea tarea, int tiempoX) {
@@ -55,7 +58,7 @@ public class Procesador {
         }
 
         // Verifico si añadir esta tarea crítica supera el límite de 2 tareas críticas
-        if (tarea.isCritica() && (tareasCriticas + 1 > 2)) {
+        else if (tarea.isCritica() && (tareasCriticas >= 2)) {
             return false;
         }
 
@@ -70,14 +73,13 @@ public class Procesador {
         return tiempoTotal;
     }
 
+    //hacer una copia de procesador para ingresar solo la copia
+
     @Override
     public String toString() {
         return "Procesador [id_procesador=" + id_procesador +
-                ", codigo_procesador=" + codigo_procesador +
                 ", esta_refrigerado=" + esta_refrigerado +
-                ", anio_procesamiento=" + anio_procesamiento +
-                ", listTareas=" + listTareas +
-                ", tareasCriticas=" + tareasCriticas + "]";
+                ", listTareas=" + listTareas + "]";
     }
 
     

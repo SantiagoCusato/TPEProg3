@@ -88,7 +88,7 @@ public class Servicios {
 		return Resultado;
 	}
 
-
+	/*
 	private int calcularTiempoTotal(HashMap<String, Procesador> asignacion) {
 		int tiempoTotal = 0;
 		for (Procesador procesador : asignacion.values()) {
@@ -96,6 +96,7 @@ public class Servicios {
 		}
 		return tiempoTotal;
 	}
+	*/
 
 	public int getTiempoTotal() {
 		return tiempoTotal;
@@ -105,7 +106,6 @@ public class Servicios {
 		this.tiempoTotal = tiempoTotal;
 	}
 
-	
 	public void asignacionTareas(int tiempo){
 		Estado estado = new Estado();			
 		backAsignacionTareas(tiempo, estado, listTareas);
@@ -114,23 +114,24 @@ public class Servicios {
 									
 	private void backAsignacionTareas(int tiempo, Estado estado, List<Tarea> listTareas){
 		//condicion de corte, quedarnos sin tareas de nuestro hashMap
+
 		if(listTareas.isEmpty()){ //primer condicion, que no haya mas tareas
 			estado.incrementarEstado();
 			if(estado.esLaMejorSolucion()){ //segunda condicion que el estado tenga mejor solucion que la guardada como mejor
-				estado.actualizarSolucion();
+				estado.actualizarSolucion(); //preguntar si debemos mostrar todos los procesadores aunque todas las tareas esten en un procesador
+				System.out.println(estado.calcularTiempo());
 			}
 		}
-		else{
+		else{ 
 			Tarea tarea = listTareas.remove(0); //obtiene el primer elemento de listTareas y lo elimina
 			Iterator<Procesador> itProcesador = obtProcesadores();
 			while(itProcesador.hasNext()){
 				Procesador proc = itProcesador.next();
 				if(proc.cumpleCondicion(tarea, tiempo)){
-					//proc.addTarea(tarea); //preguntar
 					estado.addTarea(tarea, proc);
 					backAsignacionTareas(tiempo, estado, listTareas);
-					estado.removeTarea(tarea, proc);
-					//proc.removeTarea(tarea);
+					estado.removeTarea(tarea, proc);	
+					//preguntar que hacer con el remove
 				}
 			}
 			listTareas.add(0, tarea);

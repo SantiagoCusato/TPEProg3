@@ -1,7 +1,6 @@
 package TPEProg3;
 
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class Estado {
@@ -20,52 +19,62 @@ public class Estado {
 
     public void incrementarEstado(){
         this.cont_estado++;
-        if(calcularTiempoTotal(mejor_asignacion) == 0){
-            actualizarSolucion();
-        }
     }
 
     public boolean esLaMejorSolucion(){
-        int tiempoActual = calcularTiempoTotal(asignacion_tareas);
-        //System.out.println(tiempoActual);
-        int mejorTiempo = calcularTiempoTotal(mejor_asignacion);
-        //System.out.println(mejorTiempo);
-        return tiempoActual<=mejorTiempo;
+        int tiempoActual = calcularTiempoMaximo(asignacion_tareas);
+        //int mejorTiempo = calcularTiempoMaximo(mejor_asignacion);
+
+        return tiempoActual<=mejorTiempoTotal;
     }
 
-    private int calcularTiempoTotal(HashMap<String, Procesador> asignacion) {
+    protected int calcularTiempoMaximo(HashMap<String, Procesador> asignacion) {
         int tiempoTotal = 0;
         for (Procesador procesador : asignacion.values()) {
-            tiempoTotal += procesador.getTiempoTotal();
+            if(procesador.getTiempoTotal()>tiempoTotal)
+                tiempoTotal = procesador.getTiempoTotal();
+        }
+        return tiempoTotal;
+    }
+
+    public int calcularTiempo(){
+        int tiempoTotal = 0;
+        for (Procesador procesador : mejor_asignacion.values()) {
+            if(procesador.getTiempoTotal()>tiempoTotal)
+                tiempoTotal = procesador.getTiempoTotal();
         }
         return tiempoTotal;
     }
 
     public void actualizarSolucion(){ // ver como hacer pero es esa la idea
         this.mejor_asignacion.clear();
-        this.mejor_asignacion.putAll(asignacion_tareas);
+        
+        this.mejor_asignacion.putAll(new HashMap<>(asignacion_tareas));
         //preguntar si actualizar el tiempo total
-        this.mejorTiempoTotal = calcularTiempoTotal(mejor_asignacion);
+        this.mejorTiempoTotal = calcularTiempoMaximo(mejor_asignacion);
     }
 
     public void addTarea(Tarea tarea, Procesador proc){
-        String id = tarea.getId();
-        proc.addTarea(tarea);
-        this.asignacion_tareas.put(id, proc);
-
+        String id = proc.getId_procesador();
+        if(asignacion_tareas.containsKey(id)){
+            this.asignacion_tareas.get(id).addTarea(tarea);
+        } else {
+            proc.addTarea(tarea);
+            this.asignacion_tareas.put(id, proc);
+        }
+            
     }
 
     public void removeTarea(Tarea tarea, Procesador proc){
-        String id = tarea.getId();
-        proc.removeTarea(tarea);
-        this.asignacion_tareas.remove(id);
+        String id = proc.getId_procesador();
+        this.asignacion_tareas.get(id).removeTarea(tarea);
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Estado [mejor_asignacion={\n");
-        for (Map.Entry<String, Procesador> entry : mejor_asignacion.entrySet()) {
-            sb.append("    ").append(entry.getKey()).append("=").append(entry.getValue().toString()).append(",\n");
+        for (String id : mejor_asignacion.keySet()) {
+            sb.append("    ").append(mejor_asignacion.get(id)).append(",\n");
         }
         sb.append("}, cont_estado=").append(cont_estado).append("]");
         return sb.toString();
@@ -75,4 +84,9 @@ public class Estado {
         return asignacion_tareas;
     }
     
+    public HashMap<String, Procesador> getMejorAsignacion() {
+        return mejor_asignacion;
+    }
+
+
 }

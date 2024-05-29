@@ -6,8 +6,9 @@ public class Tarea {
 	private Integer tiempo;
 	private boolean critica;
 	private Integer prioridad;
+
 	public Tarea(String id, String nombre, Integer tiempo, boolean critica, Integer prioridad) {
-	super();
+
 	this.id = id;
 	this.nombre = nombre;
 	this.tiempo = tiempo;
