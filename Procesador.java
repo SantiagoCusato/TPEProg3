@@ -1,14 +1,14 @@
 package TPEProg3;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.LinkedList;
 
 public class Procesador {
     private String id_procesador;
     private String codigo_procesador;
     private boolean esta_refrigerado;
     private int anio_procesamiento;
-    private List<Tarea> listTareas;
+    private LinkedList<Tarea> listTareas;
     private int tareasCriticas;
 
 
@@ -16,7 +16,7 @@ public class Procesador {
         this.id_procesador = id_procesador;
         this.esta_refrigerado = esta_refrigerado;
         this.anio_procesamiento = anio_procesamiento;
-        this.listTareas = new ArrayList<>();
+        this.listTareas = new LinkedList<>();
         this.tareasCriticas = 0;
     }
 
@@ -36,7 +36,7 @@ public class Procesador {
         return codigo_procesador;
     }
 
-    public void addTarea(Tarea t){  //chequear la cantidad de criticas
+    public void addTarea(Tarea t){
         this.listTareas.add(t);
         if(t.isCritica()){ 
             this.tareasCriticas++; //incremento tareasCriticas si es critica la tarea
@@ -81,6 +81,8 @@ public class Procesador {
                 ", esta_refrigerado=" + esta_refrigerado +
                 ", listTareas=" + listTareas + "]";
     }
-
+    public Procesador copiaProc() {
+    	return new Procesador(this.id_procesador, this.codigo_procesador, this.esta_refrigerado, this.anio_procesamiento);
+    }
     
 }

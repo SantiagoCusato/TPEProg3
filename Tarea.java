@@ -45,6 +45,9 @@ public class Tarea {
 	public void setPrioridad(Integer prioridad) {
 		this.prioridad = prioridad;
 	}
+	public Tarea copiaTarea() {
+		return new Tarea(this.id, this.nombre, this.tiempo, this.critica, this.prioridad);
+	}
 	@Override
 	public String toString() {
 	return "Tarea [id=" + id + ", nombre=" + nombre + ", tiempo=" + tiempo + ", critica=" + critica + ", prioridad="

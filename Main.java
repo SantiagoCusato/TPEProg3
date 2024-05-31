@@ -4,11 +4,24 @@ public class Main {
 
 	public static void main(String[] args) {
 		Servicios servicios = new Servicios("./src/tpe/datasets/Procesadores.csv", "./src/tpe/datasets/Tareas.csv");
+		Back back = new Back();
             servicios.addTarea("T1", "Limpieza", 3, true, 33);
             servicios.addTarea("T2", "Fumigacion", 1, false, 99);
- //           servicios.addTarea("T3", "Abonar", 12, true, 1);
+            servicios.addTarea("T3", "Abonar", 12, true, 1);
             servicios.addTarea("T4", "Inquisicion", 5, true, 70);         
             servicios.addTarea("T5", "Cocinar", 2, true, 41);
+            servicios.addTarea("T6", "Cocinar", 3, true, 41);
+            servicios.addTarea("T7", "Cocinar", 14, true, 41);
+            servicios.addTarea("T8", "Cocinar", 23, true, 41);
+//            servicios.addTarea("T9", "Limpieza", 3, true, 33);
+            //servicios.addTarea("T10", "Fumigacion", 1, false, 99);
+            //servicios.addTarea("T11", "Abonar", 12, true, 1);
+          //  servicios.addTarea("T12", "Inquisicion", 5, true, 70);         
+           // servicios.addTarea("T13", "Cocinar", 2, true, 41);
+           // servicios.addTarea("T14", "Cocinar", 3, true, 41);
+           // servicios.addTarea("T15", "Cocinar", 14, true, 41);
+            // servicios.addTarea("T16", "Cocinar", 23, true, 41);
+            
 
 
             /*
@@ -27,7 +40,7 @@ public class Main {
             servicios.addProcesador("7YR", "COD3", true, 2011);
 
             
-            servicios.asignacionTareas(20); 
+            back.asignacionTareas(35,servicios); 
         }
 	
 }

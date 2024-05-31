@@ -1,10 +1,9 @@
 package TPEProg3;
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * NO modificar la interfaz de esta clase ni sus métodos públicos.
@@ -13,12 +12,12 @@ import java.util.List;
  */
 public class Servicios {
 
-	private int tiempoTotal;
+	//private int tiempoTotal;
 	private HashMap<String, Tarea> mapaTareas;
 	private HashMap<String, Procesador> mapProcesadores;
-	private List<Tarea> ListaCritica ;
-	private List<Tarea> ListaNoCritica;
-	private List<Tarea> listTareas;
+	private LinkedList<Tarea> ListaCritica ;
+	private LinkedList<Tarea> ListaNoCritica;
+	private LinkedList<Tarea> listTareas;
 	//private List<Tarea> visitados;
 
 	public Servicios(String pathProcesadores, String pathTareas){
@@ -27,10 +26,10 @@ public class Servicios {
 		reader.readTasks(pathTareas);
 		this.mapaTareas = new HashMap<>();
 		this.mapProcesadores = new HashMap<>();
-		this.ListaCritica = new ArrayList<>();
-		this.ListaNoCritica = new ArrayList<>();
-		this.listTareas = new ArrayList<>();
-		this.tiempoTotal = 0;
+		this.ListaCritica = new LinkedList<>();
+		this.ListaNoCritica = new LinkedList<>();
+		this.listTareas = new LinkedList<>();
+		//this.tiempoTotal = 0;
 	}
 	
 	/*
@@ -59,7 +58,7 @@ public class Servicios {
      * preguntar !
      */
 	
-	public List<Tarea> servicio2(boolean esCritica) {
+	public LinkedList<Tarea> servicio2(boolean esCritica) {
 		if(esCritica){
 			return ListaCritica;
 		}
@@ -78,8 +77,8 @@ public class Servicios {
     /*
      *El siguiente metodo es O(n), aunque entendemos que lo podriamos realizar con arbol binario de busqueda y en el peor de los casos su complejidad seria O(n).
      */
-	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
-		List<Tarea> Resultado= new ArrayList<>();
+	public LinkedList<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
+		LinkedList<Tarea> Resultado= new LinkedList<>();
 		for(Tarea t: mapaTareas.values()) {
 			if(t.getPrioridad()<=prioridadSuperior && t.getPrioridad()>= prioridadInferior) {
 				Resultado.add(t);
@@ -98,14 +97,14 @@ public class Servicios {
 	}
 	*/
 
-	public int getTiempoTotal() {
-		return tiempoTotal;
-	}
+	//public int getTiempoTotal() {
+	//	return tiempoTotal;
+	//}
 
-	public void setTiempoTotal(int tiempoTotal) {
-		this.tiempoTotal = tiempoTotal;
-	}
-
+	//public void setTiempoTotal(int tiempoTotal) {
+		//this.tiempoTotal = tiempoTotal;
+	//}
+/*
 	public void asignacionTareas(int tiempo){
 		Estado estado = new Estado();			
 		backAsignacionTareas(tiempo, estado, listTareas);
@@ -137,7 +136,7 @@ public class Servicios {
 			listTareas.add(0, tarea);
 		}
 	}
-
+*/
 	public void addProcesador(String id_procesador, String codigo_procesador, boolean esta_refrigerado, int anio_procesamiento){
 		Procesador procesador = new Procesador(id_procesador, codigo_procesador, esta_refrigerado, anio_procesamiento);
 		this.mapProcesadores.put(id_procesador, procesador);
@@ -145,5 +144,8 @@ public class Servicios {
 
 	public Iterator<Procesador> obtProcesadores(){
 		return this.mapProcesadores.values().iterator();
+	}
+	public LinkedList<Tarea> getListServicio(){
+		return new LinkedList<>(this.listTareas);
 	}
 }
